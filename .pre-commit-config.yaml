@@ -1,0 +1,48 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0  # Use the latest tag or version
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+
+  - repo: https://github.com/psf/black
+    rev: 23.1.0  # Use the latest version of Black
+    hooks:
+      - id: black
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.7.0
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.2.0  # Use the latest version of Mypy
+    hooks:
+      - id: mypy
+        name: Mypy Type Checking
+        args: ["--ignore-missing-imports"]  # Ignore third-party imports not annotated
+        types: [python]
+
+
+  - repo: local
+    hooks:
+      - id: run-unittest
+        name: Run Unittest
+        entry: python -m unittest discover -s tests -p 'test_*.py'
+        language: python
+        pass_filenames: false  # Prevent pre-commit from passing file paths
+        types: [python]
+
+      - id: coverage-check
+        name: Run Coverage
+        entry: bash -c 'coverage run --source=src -m unittest discover -s tests -p "test_*.py" && coverage report --fail-under=80'
+        language: system
+        pass_filenames: false  # Prevent pre-commit from passing file paths
+        types: [python]

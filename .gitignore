@@ -1,1 +1,46 @@
-out.log
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment (add if using)
+env/
+venv/
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+
+# Mypy cache
+.mypy_cache/
+
+# Ruff cache
+.ruff_cache/
+
+# Pre-commit hooks cache
+.pre-commit/
+
+# Test artifacts and coverage
+*.log
+.out.log
+.cache/
+pytest_cache/
+.coveragerc
+*.coveragerc
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Ignore public outputs (if generated during builds)
+public/*.log
+
+# Node modules (if using JS)
+node_modules/
