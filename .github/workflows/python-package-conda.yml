@@ -1,0 +1,43 @@
+name: Python Package using Conda
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-activate-base: true
+        python-version: 3.10
+
+    - name: Install dependencies
+      run: |
+        conda install pip
+        pip install -r requirements.txt
+
+    - name: Lint with Ruff
+      run: |
+        pip install ruff
+        ruff . --fix  # This will auto-fix linting issues where possible
+    
+    - name: Type-check with Pyright
+      run: |
+        npm install -g pyright
+        pyright
+
+    - name: Test with unittest
+      run: |
+        python -m unittest discover -s tests -p "test_*.py"
+
