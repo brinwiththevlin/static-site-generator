@@ -1,6 +1,6 @@
 import unittest
 
-from src.htmlnode import HTMLNode, LeafNode
+from src.htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -11,10 +11,15 @@ class TestHTMLNode(unittest.TestCase):
         }
 
         node = HTMLNode(props=props)
-        expected = 'href="https://www.google.com" target="_blank"'
+        expected = ' href="https://www.google.com" target="_blank"'
         self.assertEqual(expected, node.props_to_html())
 
-    def test_reper_no_child(self):
+    def test_props_to_html_no_props(self):
+        node = HTMLNode()
+        expected = ""
+        self.assertEqual(expected, node.props_to_html())
+
+    def test_repr_no_child(self):
         props = {
             "href": "https://www.google.com",
             "target": "_blank",
@@ -23,7 +28,7 @@ class TestHTMLNode(unittest.TestCase):
         expected = f"HTMLNode(p, totally a paragraph, None, {props}"
         self.assertEqual(expected, str(node))
 
-    def test_repre_child(self):
+    def test_repr_child(self):
         props = {
             "href": "https://www.google.com",
             "target": "_blank",
@@ -52,7 +57,7 @@ class TestLeafNode(unittest.TestCase):
         }
 
         node = LeafNode("dummy", props=props)
-        expected = 'href="https://www.google.com" target="_blank"'
+        expected = ' href="https://www.google.com" target="_blank"'
         self.assertEqual(expected, node.props_to_html())
 
     def test_reper_no_child(self):
@@ -98,6 +103,11 @@ class TestLeafNode(unittest.TestCase):
         )
         self.assertEqual(node.to_html(), expected)
 
+    def test_to_html_no_props(self):
+        node = LeafNode("this is a string", tag="a")
+        expected = "<a> this is a string</a>"
+        self.assertEqual(node.to_html(), expected)
+
     def test_to_html_no_value(self):
         props = {
             "href": "https://www.google.com",
@@ -110,6 +120,48 @@ class TestLeafNode(unittest.TestCase):
             pass
         else:
             self.fail()
+
+
+class TestParentNode(unittest.TestCase):
+    def test_no_tag(self):
+        props = {
+            "href": "https://www.google.com",
+            "target": "_blank",
+        }
+        leaf_node = LeafNode("this is a string", tag="a", props=props)
+        node = ParentNode([leaf_node], None, None)
+        try:
+            node.to_html()
+        except ValueError as e:
+            if str(e) != "tag can not be None":
+                self.fail()
+        else:
+            self.fail()
+
+    def test_no_children(self):
+        props = {
+            "href": "https://www.google.com",
+            "target": "_blank",
+        }
+        node = ParentNode(None, "div", props)  # type: ignore
+        try:
+            node.to_html()
+        except ValueError as e:
+            if str(e) != "children can not be None":
+                self.fail()
+        else:
+            self.fail()
+
+    def test_to_html(self):
+        props = {
+            "href": "https://www.google.com",
+            "target": "_blank",
+        }
+        leaf_node = LeafNode("this is a string", tag="a", props=props)
+        leaf_node2 = LeafNode("this is a string too", tag="a", props=props)
+        node = ParentNode([leaf_node, leaf_node2], "div", None)
+        expected = '<div><a href="https://www.google.com" target="_blank"> this is a string</a><a href="https://www.google.com" target="_blank"> this is a string too</a></div>'
+        self.assertEqual(node.to_html(), expected)
 
 
 if __name__ == "__main__":

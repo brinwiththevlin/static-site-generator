@@ -1,6 +1,6 @@
 name: Python Package using Conda
 
-on: 
+on:
   push:
     branches:
       - main
@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python 3.12
       uses: actions/setup-python@v3
       with:
@@ -49,7 +49,7 @@ jobs:
       run: |
         pip install ruff
         ruff check . --fix  # Corrected command to lint and fix code with Ruff
-    
+
     - name: Type-check with Pyright
       run: |
         npm install -g pyright
@@ -58,5 +58,3 @@ jobs:
     - name: Test with unittest
       run: |
         python -m unittest discover -s tests -p "test_*.py"
-
-
