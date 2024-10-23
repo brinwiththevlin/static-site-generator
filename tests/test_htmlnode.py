@@ -1,3 +1,8 @@
+import sys
+import os
+
+# Add the src/ directory to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 import unittest
 
 from src.htmlnode import HTMLNode, LeafNode, ParentNode
@@ -25,7 +30,7 @@ class TestHTMLNode(unittest.TestCase):
             "target": "_blank",
         }
         node = HTMLNode(tag="p", value="totally a paragraph", props=props)
-        expected = f"HTMLNode(p, totally a paragraph, None, {props}"
+        expected = f"HTMLNode(p, totally a paragraph, None, {props})"
         self.assertEqual(expected, str(node))
 
     def test_repr_child(self):
@@ -37,7 +42,7 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode(
             tag="p", value="totally a paragraph", children=[child], props=props
         )
-        expected = "HTMLNode(p, totally a paragraph, [HTMLNode(None, hello, None, None], {'href': 'https://www.google.com', 'target': '_blank'}"
+        expected = "HTMLNode(p, totally a paragraph, [HTMLNode(None, hello, None, None)], {'href': 'https://www.google.com', 'target': '_blank'})"
         self.assertEqual(str(node), expected)
 
     def test_to_html(self):
@@ -66,7 +71,7 @@ class TestLeafNode(unittest.TestCase):
             "target": "_blank",
         }
         node = LeafNode(tag="p", value="totally a paragraph", props=props)
-        expected = f"HTMLNode(p, totally a paragraph, None, {props}"
+        expected = f"HTMLNode(p, totally a paragraph, None, {props})"
         self.assertEqual(expected, str(node))
 
     def test_repre_child(self):

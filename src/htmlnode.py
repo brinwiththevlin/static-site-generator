@@ -15,6 +15,13 @@ class HTMLNode:
         raise NotImplementedError
 
     def props_to_html(self) -> str:
+        """converts property dictionary to html string
+
+
+
+        Returns:
+            html representation of the property dictionary
+        """
         if self.props is None:
             return ""
         return " " + " ".join(
@@ -22,7 +29,16 @@ class HTMLNode:
         )
 
     def __repr__(self) -> str:
-        return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props}"
+        return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
+
+    def __eq__(self, other: object, /) -> bool:
+        assert isinstance(other, HTMLNode)
+        return (
+            self.tag == other.tag
+            and self.value == other.value
+            and self.children == other.children
+            and self.props == other.props
+        )
 
 
 class LeafNode(HTMLNode):
@@ -34,7 +50,17 @@ class LeafNode(HTMLNode):
     ):
         super().__init__(value, tag, props, None)
 
-    def to_html(self):
+    def to_html(self) -> str:
+        """convert node to html text
+
+
+
+        Returns:
+            full html text representation of node
+
+        Raises:
+            ValueError: leaf node must have a value
+        """
         if self.value is None:
             raise ValueError("LeafNode must have value")
 
@@ -53,7 +79,17 @@ class ParentNode(HTMLNode):
     ):
         super().__init__(None, tag, props, children)
 
-    def to_html(self):
+    def to_html(self) -> str:
+        """convert node to html text
+
+
+        Returns:
+            full html text representation of node
+
+        Raises:
+            ValueError: tag can not be None
+            ValueError: children can not be None
+        """
         if self.tag is None:
             raise ValueError("tag can not be None")
 

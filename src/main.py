@@ -6,7 +6,7 @@ print("hello world")
 
 def main():
     node = TextNode("fake text", TextType.BOLD, "example.com")
-    print(node)
+    print(node.text_type)
     pass
 
 

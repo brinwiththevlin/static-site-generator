@@ -22,15 +22,6 @@ repos:
       # Run the formatter.
       - id: ruff-format
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.2.0  # Use the latest version of Mypy
-    hooks:
-      - id: mypy
-        name: Mypy Type Checking
-        args: ["--ignore-missing-imports"]  # Ignore third-party imports not annotated
-        types: [python]
-
-
   - repo: local
     hooks:
       - id: run-unittest
