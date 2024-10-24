@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 # Add the src/ directory to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
@@ -39,9 +39,7 @@ class TestHTMLNode(unittest.TestCase):
             "target": "_blank",
         }
         child = HTMLNode(value="hello")
-        node = HTMLNode(
-            tag="p", value="totally a paragraph", children=[child], props=props
-        )
+        node = HTMLNode(tag="p", value="totally a paragraph", children=[child], props=props)
         expected = "HTMLNode(p, totally a paragraph, [HTMLNode(None, hello, None, None)], {'href': 'https://www.google.com', 'target': '_blank'})"
         self.assertEqual(str(node), expected)
 
@@ -103,9 +101,7 @@ class TestLeafNode(unittest.TestCase):
             "target": "_blank",
         }
         node = LeafNode("this is a string", tag="a", props=props)
-        expected = (
-            '<a href="https://www.google.com" target="_blank"> this is a string</a>'
-        )
+        expected = '<a href="https://www.google.com" target="_blank"> this is a string</a>'
         self.assertEqual(node.to_html(), expected)
 
     def test_to_html_no_props(self):

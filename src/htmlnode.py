@@ -1,4 +1,8 @@
 class HTMLNode:
+    """
+    class to represent an inline HTML node
+    """
+
     def __init__(
         self,
         value: str | None = None,
@@ -12,21 +16,18 @@ class HTMLNode:
         self.props = props
 
     def to_html(self):
+        """to be implemented by child classes"""
         raise NotImplementedError
 
     def props_to_html(self) -> str:
         """converts property dictionary to html string
-
-
 
         Returns:
             html representation of the property dictionary
         """
         if self.props is None:
             return ""
-        return " " + " ".join(
-            map(lambda pair: f'{pair[0]}="{pair[1]}"', self.props.items())
-        )
+        return " " + " ".join(map(lambda pair: f'{pair[0]}="{pair[1]}"', self.props.items()))
 
     def __repr__(self) -> str:
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
@@ -42,6 +43,10 @@ class HTMLNode:
 
 
 class LeafNode(HTMLNode):
+    """
+    class to represnt a HTML node that has a text value and no children
+    """
+
     def __init__(
         self,
         value: str,
@@ -71,6 +76,10 @@ class LeafNode(HTMLNode):
 
 
 class ParentNode(HTMLNode):
+    """
+    parent nodes have no value and hsold have children
+    """
+
     def __init__(
         self,
         children: list["HTMLNode"],

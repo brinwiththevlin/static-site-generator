@@ -11,16 +11,33 @@ repos:
     rev: 23.1.0  # Use the latest version of Black
     hooks:
       - id: black
+        args: ["--line-length=120"]
+
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.10.0
+    hooks:
+      - id: isort
+        args: ["--profile=black"]
+
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
     rev: v0.7.0
     hooks:
-      # Run the linter.
       - id: ruff
-        args: [ --fix ]
-      # Run the formatter.
-      - id: ruff-format
+        args:
+        - "--fix"
+        - "--line-length=120"
+
+  - repo: https://github.com/econchick/interrogate
+    rev: 1.6.0
+    hooks:
+      - id: interrogate
+        exclude: ^(docs/|tests/|build/)
+        args:
+          - "-v"
+          - "--fail-under=70"  # Set the documentation coverage threshold to 70%
+          - "--ignore-magic"  # Ignore all dunder methods like __init__
+          - "--ignore-init-method"  # (Optional) Ignore __init__ method specifically
 
   - repo: local
     hooks:
@@ -34,6 +51,13 @@ repos:
       - id: coverage-check
         name: Run Coverage
         entry: bash -c 'coverage run --source=src -m unittest discover -s tests -p "test_*.py" && coverage report --fail-under=80'
+        language: system
+        pass_filenames: false  # Prevent pre-commit from passing file paths
+        types: [python]
+
+      - id: pyright
+        name: Pyright Type Checking
+        entry: pyright
         language: system
         pass_filenames: false  # Prevent pre-commit from passing file paths
         types: [python]
