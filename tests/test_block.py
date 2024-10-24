@@ -1,6 +1,6 @@
 import unittest
 
-from src.block import markdown_to_blocks
+from block import markdown_to_blocks
 
 
 # markdown_to_blocks("")
