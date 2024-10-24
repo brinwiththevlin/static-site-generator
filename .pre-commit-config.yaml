@@ -43,14 +43,14 @@ repos:
     hooks:
       - id: run-unittest
         name: Run Unittest
-        entry: python -m unittest discover -s tests -p 'test_*.py'
-        language: python
+        entry: bash -c "source $(conda info --base)/etc/profile.d/conda.sh && conda activate boot_dev && python -m unittest discover -s tests -p 'test_*.py'"
+        language: system
         pass_filenames: false  # Prevent pre-commit from passing file paths
         types: [python]
 
       - id: coverage-check
         name: Run Coverage
-        entry: bash -c 'coverage run --source=src -m unittest discover -s tests -p "test_*.py" && coverage report --fail-under=80'
+        entry: bash -c "source $(conda info --base)/etc/profile.d/conda.sh && conda activate boot_dev && coverage run --source=src -m unittest discover -s tests -p 'test_*.py' && coverage report --fail-under=80"
         language: system
         pass_filenames: false  # Prevent pre-commit from passing file paths
         types: [python]
