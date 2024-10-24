@@ -37,6 +37,7 @@ dev = [
     "isort",
     "ruff",
     "pyright",
+    "interogate",
 ]
 
 [tool.black]
