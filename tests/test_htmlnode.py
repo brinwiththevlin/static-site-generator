@@ -96,12 +96,12 @@ class TestLeafNode(unittest.TestCase):
             "target": "_blank",
         }
         node = LeafNode("this is a string", tag="a", props=props)
-        expected = '<a href="https://www.google.com" target="_blank"> this is a string</a>'
+        expected = '<a href="https://www.google.com" target="_blank">this is a string</a>'
         self.assertEqual(node.to_html(), expected)
 
     def test_to_html_no_props(self):
         node = LeafNode("this is a string", tag="a")
-        expected = "<a> this is a string</a>"
+        expected = "<a>this is a string</a>"
         self.assertEqual(node.to_html(), expected)
 
     def test_to_html_no_value(self):
@@ -156,7 +156,7 @@ class TestParentNode(unittest.TestCase):
         leaf_node = LeafNode("this is a string", tag="a", props=props)
         leaf_node2 = LeafNode("this is a string too", tag="a", props=props)
         node = ParentNode([leaf_node, leaf_node2], "div", None)
-        expected = '<div><a href="https://www.google.com" target="_blank"> this is a string</a><a href="https://www.google.com" target="_blank"> this is a string too</a></div>'
+        expected = '<div><a href="https://www.google.com" target="_blank">this is a string</a><a href="https://www.google.com" target="_blank">this is a string too</a></div>'
         self.assertEqual(node.to_html(), expected)
 
 

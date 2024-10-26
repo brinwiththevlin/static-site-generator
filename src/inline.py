@@ -53,7 +53,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     delim_dic = {
         TextType.BOLD: "**",
         TextType.ITALIC: "*",
-        TextType.CODE: "`",
+        TextType.CODE: "```",
     }
 
     if text_type not in delim_dic:
@@ -68,15 +68,15 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     if first.text == "":
         return []
 
-    mod = int(first.text.find("**") == 0)
+    mod = int(first.text.find(delimiter) == 0)
     parts = first.text.split(delimiter)
 
+    if len(parts) == 1:
+        return [first] + split_nodes_delimiter(rest, delimiter, text_type)
     if parts[0] == "":
         parts = parts[1:]
     if parts[-1] == "":
         parts = parts[:-1]
-    if len(parts) == 1:
-        return [first] + split_nodes_delimiter(rest, delimiter, text_type)
 
     new_nodes = [
         TextNode(a, TextType.TEXT, first.url) if i % 2 == mod else TextNode(a, text_type, first.url)
@@ -191,7 +191,7 @@ def text_to_textnodes(text: str) -> list[TextNode]:
     nodes = [TextNode(text, TextType.TEXT)]
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
-    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, "```", TextType.CODE)
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     return nodes

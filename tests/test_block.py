@@ -88,9 +88,9 @@ class TestMarkdownToHTMLNode(unittest.TestCase):
 
         self.assertEqual(html_node.children[0].tag, "ol")  # type: ignore
         self.assertEqual(html_node.children[0].children[0].tag, "li")  # type: ignore
-        self.assertEqual(html_node.children[0].children[0].children[0].value, "First item\n")  # type: ignore
+        self.assertEqual(html_node.children[0].children[0].children[0].value, "First item")  # type: ignore
         self.assertEqual(html_node.children[0].children[1].tag, "li")  # type: ignore
-        self.assertEqual(html_node.children[0].children[1].children[0].value, "Second item\n")  # type: ignore
+        self.assertEqual(html_node.children[0].children[1].children[0].value, "Second item")  # type: ignore
         self.assertEqual(html_node.children[0].children[2].tag, "li")  # type: ignore
         self.assertEqual(html_node.children[0].children[2].children[0].value, "Third item")  # type: ignore
 

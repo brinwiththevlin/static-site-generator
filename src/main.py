@@ -2,8 +2,11 @@
 
 import logging
 import os
+import re
 import shutil
 from pathlib import Path
+
+from block import markdown_to_html_node
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="out.log", level=logging.INFO)
@@ -43,21 +46,58 @@ def dircopy(source: str | Path, dest: str | Path):
             shutil.copy(os.path.join(source, child), os.path.join(dest, child))
 
 
+def extract_title(markdown: str) -> str:
+    pattern = re.compile("^# (.*)")
+    h1 = re.match(pattern, markdown)
+    if not h1:
+        raise Exception("no title to the markdown")
+
+    return h1.group(1)
+
+
+def generate_page(from_path: str | Path, template_path: str | Path, dest_path: str | Path):
+    """generate an html page based on the template and teh source markdown storing at dest_path
+
+
+
+    Args:
+        from_path: source path for markdown
+        template_path: template path containing html skeleton
+        dest_path: path to write final html page
+    """
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    with open(from_path) as source:
+        markdown = source.read()
+
+    with open(template_path) as template:
+        html_temp = template.read()
+
+    content = markdown_to_html_node(markdown).to_html()
+    title = extract_title(markdown)
+    full = html_temp.replace("{{ Title }}", title).replace("{{ Content }}", content)
+
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    with open(dest_path, "w") as file:
+        file.write(full)
+
+
 def main():
     """main function
 
     does everything
     """
-    source = "static"
-    dest = "public"
     if os.getcwd().split("/")[-1] == "src":
-        source = os.path.join(os.getcwd(), "..", source)
-        dest = os.path.join(os.getcwd(), "..", dest)
-    else:
-        source = os.path.join(os.getcwd(), source)
-        dest = os.path.join(os.getcwd(), dest)
+        os.chdir("..")
+    shutil.rmtree("public")
 
+    source = os.path.join(os.getcwd(), "static")
+    dest = os.path.join(os.getcwd(), "public")
     dircopy(source, dest)
+
+    template_path = "template.html"
+    content_path = "content/index.md"
+    dest_path = "public/index.html"
+    generate_page(content_path, template_path, dest_path)
 
 
 if __name__ == "__main__":

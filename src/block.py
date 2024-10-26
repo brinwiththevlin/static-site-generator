@@ -89,14 +89,14 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                 list_items = block.split("\n* ")
                 if list_items[0] == block:
                     list_items = block.split("\n- ")
-                list_items = [re.sub(r"^- ", "", re.sub(r"^\* ", "", item)) for item in list_items if item != ""]
+                list_items = [re.sub(r"^[-\*] ", "", item) for item in list_items if item != ""]
                 list_item_nodes = []
                 for item in list_items:
                     children = list(map(text_node_to_html_node, text_to_textnodes(item)))
                     list_item_nodes.append(ParentNode(tag="li", children=children))
                 block_nodes.append(ParentNode(tag="ul", children=list_item_nodes))
             case BlockType.OL:
-                block = re.sub(r"\d+\. ", "|%<~DEL~>%|", block)
+                block = re.sub(r"[\n]?\d+\. ", "|%<~DEL~>%|", block)
                 list_items = block.split("|%<~DEL~>%|")
                 list_items = [item for item in list_items if item != ""]
                 list_item_nodes = []
