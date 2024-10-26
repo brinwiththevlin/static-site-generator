@@ -2,6 +2,18 @@ from enum import Enum
 
 
 class TextType(Enum):
+    """
+    text type Enum inline text can only be one of these types
+
+    Attributes:
+        TEXT (str): normal text
+        BOLD (str): bold text
+        ITALIC (str): italic
+        CODE (str): code block
+        LINK (str): hyperlink
+        IMAGE (str): image and alt text
+    """
+
     TEXT = "text"
     BOLD = "bold"
     ITALIC = "italic"
@@ -11,6 +23,10 @@ class TextType(Enum):
 
 
 class TextNode:
+    """
+    text node that contains text information, text type can only be one of TextType
+    """
+
     def __init__(self, text: str, text_type: TextType, url: str | None = None):
         if text_type not in TextType:
             raise ValueError("text type must be in TextType")

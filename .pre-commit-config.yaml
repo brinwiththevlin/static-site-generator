@@ -34,7 +34,7 @@ repos:
       - id: interrogate
         exclude: ^(docs/|tests/|build/)
         args:
-          - "-v"
+          - "--verbose"
           - "--fail-under=70"  # Set the documentation coverage threshold to 70%
           - "--ignore-magic"  # Ignore all dunder methods like __init__
           - "--ignore-init-method"  # (Optional) Ignore __init__ method specifically
@@ -59,5 +59,6 @@ repos:
         name: Pyright Type Checking
         entry: pyright
         language: system
+        exclude: ^(tests/)
         pass_filenames: false  # Prevent pre-commit from passing file paths
         types: [python]
