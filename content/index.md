@@ -1,6 +1,6 @@
 # Tolkien Fan Club
 
-**I like Tolkien**. Read my [first post here](/majesty) (sorry the link doesn't work yet)
+**I like Tolkien**. Read my [first post here](/majesty)
 
 > All that is gold does not glitter
 
@@ -26,9 +26,5 @@
 Here's what `elflang` looks like (the perfect coding language):
 
 ```
-func main(){
-    fmt.Println("Hello, World!")
-}
+func main(){ fmt.Println("Hello, World!") }
 ```
-
-heres a cool picture ![cool](/images/rivendell.png)

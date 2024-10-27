@@ -81,6 +81,23 @@ def generate_page(from_path: str | Path, template_path: str | Path, dest_path: s
         file.write(full)
 
 
+def generate_pages_recursive(dir_path_content: str | Path, template_path: str | Path, dest_dir_path: str | Path):
+    children = os.listdir(dir_path_content)
+    for child in children:
+        if child.endswith(".md"):
+            generate_page(
+                os.path.join(dir_path_content, child),
+                template_path,
+                os.path.join(dest_dir_path, child.replace(".md", ".html")),
+            )
+        if os.path.isdir(os.path.join(dir_path_content, child)):
+            generate_pages_recursive(
+                os.path.join(dir_path_content, child),
+                template_path,
+                os.path.join(dest_dir_path, child.replace(".md", ".html")),
+            )
+
+
 def main():
     """main function
 
@@ -95,9 +112,9 @@ def main():
     dircopy(source, dest)
 
     template_path = "template.html"
-    content_path = "content/index.md"
-    dest_path = "public/index.html"
-    generate_page(content_path, template_path, dest_path)
+    content_path = "content"
+    dest_path = "public"
+    generate_pages_recursive(content_path, template_path, dest_path)
 
 
 if __name__ == "__main__":

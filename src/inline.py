@@ -53,7 +53,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     delim_dic = {
         TextType.BOLD: "**",
         TextType.ITALIC: "*",
-        TextType.CODE: "```",
+        TextType.CODE: "`",
     }
 
     if text_type not in delim_dic:
@@ -139,7 +139,7 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     new_string = re.sub(r"!\[(.*?)\]\((.*?)\)", "|%<~DEL~>%| |%<~DEL~>%|", first.text)
     parts = [part for part in new_string.split("|%<~DEL~>%|") if part != ""]
 
-    if len(parts) == 1:
+    if not matches:
         return [first] + split_nodes_image(rest)
 
     new_nodes = []
@@ -173,7 +173,7 @@ def split_nodes_link(old_nodes: list[TextNode]):
     new_string = re.sub(r"\[(.*?)\]\((.*?)\)", "|%<~DEL~>%| |%<~DEL~>%|", first.text)
     parts = [part for part in new_string.split("|%<~DEL~>%|") if part != ""]
 
-    if len(parts) == 1:
+    if not matches:
         return [first] + split_nodes_link(rest)
 
     new_nodes = []
@@ -191,7 +191,7 @@ def text_to_textnodes(text: str) -> list[TextNode]:
     nodes = [TextNode(text, TextType.TEXT)]
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
-    nodes = split_nodes_delimiter(nodes, "```", TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     return nodes
