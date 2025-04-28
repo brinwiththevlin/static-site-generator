@@ -1,3 +1,5 @@
+"""Handles the conversion of inline tags to HTML."""
+
 import re
 
 from htmlnode import HTMLNode, LeafNode
@@ -5,7 +7,7 @@ from textnode import TextNode, TextType
 
 
 def text_node_to_html_node(text_node: TextNode) -> HTMLNode:
-    """convert a TextNode to a HTMLNode
+    """Convert a TextNode to a HTMLNode.
 
     used the TextType of a TextNode to generate a new HTMLNode
 
@@ -25,16 +27,19 @@ def text_node_to_html_node(text_node: TextNode) -> HTMLNode:
         case TextType.CODE:
             return LeafNode(text_node.text, "code")
         case TextType.LINK:
-            assert text_node.url is not None, "Link requires a url"
+            if text_node.url is None:
+                msg = "Link requires a url"
+                raise ValueError(msg)
             return LeafNode(text_node.text, "a", props={"href": text_node.url})
         case TextType.IMAGE:
-            assert text_node.url is not None, "Image requires a url"
+            if text_node.url is None:
+                msg = "Image requires a url"
+                raise ValueError(msg)
             return LeafNode("", "img", props={"src": text_node.url, "alt": text_node.text})
 
 
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
-    # TODO: extend to support nested delimiters
-    """creates new list of TextNodes with appropriate TextType
+    """Creates new list of TextNodes with appropriate TextType.
 
     takes a list of TextNodes and a delimiter and splits each TextNode by the delimter and changes
     the appropriate parts to the target TextTypei
@@ -72,7 +77,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     parts = first.text.split(delimiter)
 
     if len(parts) == 1:
-        return [first] + split_nodes_delimiter(rest, delimiter, text_type)
+        return [first, *split_nodes_delimiter(rest, delimiter, text_type)]
     if parts[0] == "":
         parts = parts[1:]
     if parts[-1] == "":
@@ -88,7 +93,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
 
 
 def extract_markdown_images(text: str) -> list[tuple[str, str]]:
-    """takes in raw Markdown text and return a list of tuples
+    """Takes in raw Markdown text and return a list of tuples.
 
     eack image if of the format ![alt_text](url) and it transformed into a tuple (alt_text, url)
 
@@ -99,12 +104,11 @@ def extract_markdown_images(text: str) -> list[tuple[str, str]]:
         list of alt_text, url tuples
     """
     pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
-    matches = re.findall(pattern, text)
-    return matches
+    return re.findall(pattern, text)
 
 
 def extract_markdown_links(text: str) -> list[tuple[str, str]]:
-    """takes in raw Markdown text and returns a list of tuples for links
+    """Takes in raw Markdown text and returns a list of tuples for links.
 
     each link is of the format [anchor_text](url). this is then transformed into a tuple (anchor_text,url)
 
@@ -115,13 +119,11 @@ def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     list of (anchor_text, url) tuples
     """
     pattern = re.compile(r"\[(.*?)\]\((.*?)\)")
-    matches = re.findall(pattern, text)
-    return matches
+    return re.findall(pattern, text)
 
 
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
-    """splits TextNodes so that image test is its own node of TextType.IMAGE
-
+    """Splits TextNodes so that image test is its own node of TextType.IMAGE.
 
     Args:
         old_nodes: old list of TextNodes
@@ -140,7 +142,7 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     parts = [part for part in new_string.split("|%<~DEL~>%|") if part != ""]
 
     if not matches:
-        return [first] + split_nodes_image(rest)
+        return [first, *split_nodes_image(rest)]
 
     new_nodes = []
     while matches or parts:
@@ -153,9 +155,8 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     return new_nodes + split_nodes_image(rest)
 
 
-def split_nodes_link(old_nodes: list[TextNode]):
-    """splits TextNodes so that image test is its own node of TextType.IMAGE
-
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    """Splits TextNodes so that image test is its own node of TextType.IMAGE.
 
     Args:
         old_nodes: old list of TextNodes
@@ -174,7 +175,7 @@ def split_nodes_link(old_nodes: list[TextNode]):
     parts = [part for part in new_string.split("|%<~DEL~>%|") if part != ""]
 
     if not matches:
-        return [first] + split_nodes_link(rest)
+        return [first, *split_nodes_link(rest)]
 
     new_nodes = []
     while matches or parts:
@@ -188,10 +189,18 @@ def split_nodes_link(old_nodes: list[TextNode]):
 
 
 def text_to_textnodes(text: str) -> list[TextNode]:
+    """Converts a string to a list of TextNodes.
+
+    The string is split by spaces and each part is converted to a TextNode.
+
+    Args:
+        text: the string to convert
+    Returns:
+        list of TextNodes
+    """
     nodes = [TextNode(text, TextType.TEXT)]
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
     nodes = split_nodes_image(nodes)
-    nodes = split_nodes_link(nodes)
-    return nodes
+    return split_nodes_link(nodes)

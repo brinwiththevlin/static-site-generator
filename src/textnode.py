@@ -1,9 +1,11 @@
+"""textnode tree representation of the content."""
+
 from enum import Enum
+from typing import final, override
 
 
 class TextType(Enum):
-    """
-    text type Enum inline text can only be one of these types
+    """text type Enum inline text can only be one of these types.
 
     Attributes:
         TEXT (str): normal text
@@ -22,28 +24,40 @@ class TextType(Enum):
     IMAGE = "image"
 
 
+@final
 class TextNode:
-    """
-    text node that contains text information, text type can only be one of TextType
-    """
+    """text node that contains text information, text type can only be one of TextType."""
 
-    def __init__(self, text: str, text_type: TextType, url: str | None = None):
+    def __init__(self, text: str, text_type: TextType, url: str | None = None) -> None:
+        """Initialize a text node.
+
+        Args:
+            text: the text in the node
+            text_type: the type of text
+            url: the url for link or image, if applicable
+        """
         if text_type not in TextType:
-            raise ValueError("text type must be in TextType")
+            msg = "text type must be in TextType"
+            raise ValueError(msg)
         self.text = text
         self.text_type = text_type
-        if text_type == TextType.LINK or text_type == TextType.IMAGE:
+        if text_type in (TextType.LINK, TextType.IMAGE):
             if not url:
-                raise ValueError("link or image requires a url")
+                msg = "link or image requires a url"
+                raise ValueError(msg)
             self.url = url
         elif url is not None:
-            raise ValueError("only link or image take a url")
+            msg = "only link or image take a url"
+            raise ValueError(msg)
         else:
             self.url = None
 
+    @override
     def __eq__(self, other: object, /) -> bool:
-        assert isinstance(other, TextNode)
+        if not isinstance(other, TextNode):
+            return NotImplemented
         return self.text == other.text and self.text_type == other.text_type and self.url == other.url
 
+    @override
     def __repr__(self) -> str:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"

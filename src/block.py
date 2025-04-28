@@ -1,3 +1,5 @@
+"""Handles markdown Blocks and converts them to HTMLNode tree representation."""
+
 import re
 from enum import Enum
 
@@ -6,6 +8,16 @@ from inline import text_node_to_html_node, text_to_textnodes
 
 
 class BlockType(Enum):
+    """BlockType is an enumeration that represents the type of block in a markdown file.
+
+    Attributes:
+        HEADER (str): Header block type.
+        UL (str): unordered list block type.
+        OL (srt): ordered list block type.
+        QUOTE (str): quote block type.
+        PARAGRAPH (str): Paragraph block type.
+    """
+
     HEADER = "header"
     UL = "unorderd"
     OL = "ordered"
@@ -14,10 +26,9 @@ class BlockType(Enum):
 
 
 def markdown_to_blocks(markdown: str) -> list[str]:
-    """takes a string that represents a whole block
+    """Takes a string that represents a whole block.
 
-
-    a markdown file is understood to be a collection of blocks separated by an empty line
+    A markdown file is understood to be a collection of blocks separated by an empty line
 
     Args:
         markdown: the full text of a markdown file
@@ -26,16 +37,16 @@ def markdown_to_blocks(markdown: str) -> list[str]:
         list of strings each representing a block in the original
     """
     blocks = markdown.split("\n\n")
-    return list(map(lambda x: x.strip(), blocks))
+    return [block.strip() for block in blocks]
 
 
 def block_to_block_type(block: str) -> BlockType:
-    """takes a single markdown block and performs pattern mattching to return the type of block it is
+    r"""Takes a single markdown block and performs pattern mattching to return the type of block it is.
 
     starting with 1-6 # is a header
     each line starting with > is a quote
-    each line starting with * or - is unordered list
-    \\d\\. at the start of every line is an ordered list
+    each line starting with \* or - is unordered list
+    \d\. at the start of every line is an ordered list
     else just a paragraph
 
     Args:
@@ -48,19 +59,19 @@ def block_to_block_type(block: str) -> BlockType:
     if re.match(pattern, block):
         return BlockType.HEADER
     lines = block.split("\n")
-    if all(map(lambda x: x[0] == ">", lines)):
+    if all(x[0] == ">" for x in lines):
         return BlockType.QUOTE
-    if all(map(lambda x: x[0] == "*", lines)) or all(map(lambda x: x[0] == "-", lines)):
+    if all(x[0] == "*" for x in lines) or all(x[0] == "-" for x in lines):
         return BlockType.UL
 
     pattern = re.compile(r"^\s*\d\.")
-    if all(map(lambda x: re.match(pattern, x), lines)):
+    if all(re.match(pattern, x) for x in lines):
         return BlockType.OL
     return BlockType.PARAGRAPH
 
 
 def markdown_to_html_node(markdown: str) -> ParentNode:
-    """takes a whole md file and converts it to the HTMLNode tree representation of the content
+    """Takes a whole md file and converts it to the HTMLNode tree representation of the content.
 
     Args:
         markdown: full md file
@@ -90,13 +101,13 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                 if list_items[0] == block:
                     list_items = block.split("\n- ")
                 list_items = [re.sub(r"^[-\*] ", "", item) for item in list_items if item != ""]
-                list_item_nodes = []
+                list_item_nodes: list[HTMLNode] = []
                 for item in list_items:
                     children = list(map(text_node_to_html_node, text_to_textnodes(item)))
                     list_item_nodes.append(ParentNode(tag="li", children=children))
                 block_nodes.append(ParentNode(tag="ul", children=list_item_nodes))
             case BlockType.OL:
-                block = re.sub(r"[\n]?\d+\. ", "|%<~DEL~>%|", block)
+                block = re.sub(r"[\n]?\d+\. ", "|%<~DEL~>%|", block)  # noqa: PLW2901
                 list_items = block.split("|%<~DEL~>%|")
                 list_items = [item for item in list_items if item != ""]
                 list_item_nodes = []
@@ -105,5 +116,4 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                     list_item_nodes.append(ParentNode(tag="li", children=children))
                 block_nodes.append(ParentNode(tag="ol", children=list_item_nodes))
 
-    tree = ParentNode(tag="div", children=block_nodes)
-    return tree
+    return ParentNode(tag="div", children=block_nodes)

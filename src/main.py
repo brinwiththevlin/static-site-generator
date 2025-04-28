@@ -1,4 +1,4 @@
-# from textnode import TextNode, TextType
+"""Main module for the static site generator."""
 
 import logging
 import os
@@ -12,103 +12,126 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename="out.log", level=logging.INFO)
 
 
-print("hello world")
+def dircopy(source: str | Path, dest: str | Path) -> None:
+    """Copy all content recursively from one tree to the other.
 
-
-def dircopy(source: str | Path, dest: str | Path):
-    """copy all content recursivly form one tree to the other
-
-    deletes target file tree before the copy
+    Deletes the target file tree before the copy.
 
     Args:
-        source: path that is the root of the copy source tree
-        dest: path thta is the root of the destination tree
+        source (str | Path): Path that is the root of the copy source tree.
+        dest (str | Path): Path that is the root of the destination tree.
 
     Raises:
-        FileNotFoundError: if either path is a file and not a directory throw an FileNotFoundError
+        FileNotFoundError: If either path is a file and not a directory.
     """
-
-    assert not os.path.isfile(source)
-    assert not os.path.isfile(dest)
-    if not os.path.exists(source):
+    if not Path(source).is_dir() or not Path(source).exists():
         raise FileNotFoundError(f"{source} is not a directory")
+    if not Path(dest).is_dir() or not Path(dest).exists():
+        raise FileNotFoundError(f"{dest} is not a directory")
 
-    if os.path.exists(dest):
+    if Path(dest).exists():
         shutil.rmtree(dest)
-    os.mkdir(dest)
+    Path(dest).mkdir(parents=True, exist_ok=True)
 
-    children = os.listdir(source)
+    children = Path(source).iterdir()
     for child in children:
-        if os.path.isdir(os.path.join(source, child)):
-            dircopy(os.path.join(source, child), os.path.join(dest, child))
+        if child.is_dir():
+            # dircopy using Pathlib
+            dircopy(child, Path(dest) / child.name)
         else:
-            logger.info(f"copying {os.path.join(source, child)} to {os.path.join(dest, child)}")
-            shutil.copy(os.path.join(source, child), os.path.join(dest, child))
+            logger.info(f"copying {child} to {Path(dest) / child.name}")
+            _ = shutil.copy(child, Path(dest) / child.name)
 
 
 def extract_title(markdown: str) -> str:
+    """Extract the title from the markdown file.
+
+    The title is the first line of the markdown file, and it is expected to be in the format "# Title".
+
+    Args:
+        markdown (str): The markdown content.
+
+    Returns:
+        str: The title extracted from the markdown content.
+
+    Raises:
+        Exception: If the title is not found in the markdown content.
+    """
     pattern = re.compile("^# (.*)")
     h1 = re.match(pattern, markdown)
     if not h1:
-        raise Exception("no title to the markdown")
+        exc = Exception("Title not found in markdown")
+        raise exc
 
     return h1.group(1)
 
 
-def generate_page(from_path: str | Path, template_path: str | Path, dest_path: str | Path):
-    """generate an html page based on the template and teh source markdown storing at dest_path
-
-
+def generate_page(from_path: str | Path, template_path: str | Path, dest_path: str | Path) -> None:
+    """Generate an html page based on the template and teh source markdown storing at dest_path.
 
     Args:
         from_path: source path for markdown
         template_path: template path containing html skeleton
         dest_path: path to write final html page
     """
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
-    with open(from_path) as source:
+    logger.info(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    # open with Path.open
+    with Path(from_path).open() as source:
         markdown = source.read()
 
-    with open(template_path) as template:
+    with Path(template_path).open() as template:
         html_temp = template.read()
 
     content = markdown_to_html_node(markdown).to_html()
     title = extract_title(markdown)
     full = html_temp.replace("{{ Title }}", title).replace("{{ Content }}", content)
 
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    with open(dest_path, "w") as file:
-        file.write(full)
+    Path(dest_path).parent.mkdir(exist_ok=True, parents=True)
+    with Path(dest_path).open("w") as file:
+        _ = file.write(full)
 
 
-def generate_pages_recursive(dir_path_content: str | Path, template_path: str | Path, dest_dir_path: str | Path):
-    children = os.listdir(dir_path_content)
+def generate_pages_recursive(
+    dir_path_content: str | Path,
+    template_path: str | Path,
+    dest_dir_path: str | Path,
+) -> None:
+    """Generates html pages recursively from a directory containing markdown files.
+
+    This function will create a directory tree in the desination directory
+
+    Args:
+        dir_path_content: [TODO:description]
+        template_path: [TODO:description]
+        dest_dir_path: [TODO:description]
+    """
+    children = Path(dir_path_content).iterdir()
     for child in children:
-        if child.endswith(".md"):
+        if child.name.endswith(".md"):
             generate_page(
-                os.path.join(dir_path_content, child),
+                child,
                 template_path,
-                os.path.join(dest_dir_path, child.replace(".md", ".html")),
+                child.parent / child.name.replace(".md", ".html"),
             )
-        if os.path.isdir(os.path.join(dir_path_content, child)):
+        if child.is_dir():
             generate_pages_recursive(
-                os.path.join(dir_path_content, child),
+                child,
                 template_path,
-                os.path.join(dest_dir_path, child.replace(".md", ".html")),
+                Path(dest_dir_path) / child.name.replace(".md", ".html"),
             )
 
 
-def main():
-    """main function
+def main() -> None:
+    """Main function.
 
     does everything
     """
-    if os.getcwd().split("/")[-1] == "src":
+    if Path.cwd().name == "src":
         os.chdir("..")
     shutil.rmtree("public")
 
-    source = os.path.join(os.getcwd(), "static")
-    dest = os.path.join(os.getcwd(), "public")
+    source = Path.cwd() / Path("static")
+    dest = Path.cwd() / Path("public")
     dircopy(source, dest)
 
     template_path = "template.html"

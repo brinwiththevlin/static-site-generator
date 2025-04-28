@@ -40,7 +40,7 @@ This is a simple static site generator project written in Python. It takes markd
 ### Usage
 can convert mnay markdown files to html. each markdown file is requierd to have a title at the top marked by a single hastag then the title
 all markdown files and associated files (i.e. images) shuold be placed in static-site-generator/content
-then from the root of the project run 
+then from the root of the project run
 ```bash
 cd path/to/static-site-generator
 ./main.sh
