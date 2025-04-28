@@ -148,7 +148,7 @@ def main() -> None:
     template_path = "template.html"
     content_path = "content"
     dest_path = "docs"
-    base_path = Path(base_path) / Path("docs")
+    base_path = Path(base_path)
     generate_pages_recursive(content_path, template_path, dest_path, base_path)
 
 
