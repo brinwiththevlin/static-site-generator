@@ -94,7 +94,7 @@ def generate_page(
     title = extract_title(markdown)
     full = html_temp.replace("{{ Title }}", title).replace("{{ Content }}", content)
 
-    full = full.replace('href="/', f'href="{base_path}/').replace('src="/', f'src="{base_path}/')
+    full = full.replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}')
 
     Path(dest_path).parent.mkdir(exist_ok=True, parents=True)
     with Path(dest_path).open("w") as file:
@@ -124,9 +124,7 @@ def generate_pages_recursive(
                 child, template_path, Path(dest_dir_path) / child.name.replace(".md", ".html"), Path(base_path)
             )
         if child.is_dir():
-            generate_pages_recursive(
-                child, template_path, Path(dest_dir_path) / child.name.replace(".md", ".html"), Path(base_path)
-            )
+            generate_pages_recursive(child, template_path, Path(dest_dir_path) / child.name, Path(base_path))
 
 
 def main() -> None:
@@ -135,6 +133,10 @@ def main() -> None:
     does everything
     """
     base_path = sys.argv[1] if len(sys.argv) > 1 else "/"
+    if not base_path.startswith("/"):
+        base_path = "/" + base_path
+    if not base_path.endswith("/"):
+        base_path = base_path + "/"
 
     if Path.cwd().name == "src":
         os.chdir("..")
@@ -148,7 +150,6 @@ def main() -> None:
     template_path = "template.html"
     content_path = "content"
     dest_path = "docs"
-    base_path = Path(base_path)
     generate_pages_recursive(content_path, template_path, dest_path, base_path)
 
 
