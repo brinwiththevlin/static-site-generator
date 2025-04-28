@@ -124,14 +124,14 @@ def generate_pages_recursive(
                 child,
                 template_path,
                 Path(dest_dir_path) / child.name.replace(".md", ".html"),
-                base_path,
+                Path(base_path) / child.parent.name,
             )
         if child.is_dir():
             generate_pages_recursive(
                 child,
                 template_path,
                 Path(dest_dir_path) / child.name.replace(".md", ".html"),
-                base_path,
+                Path(base_path) / child.parent.name,
             )
 
 
