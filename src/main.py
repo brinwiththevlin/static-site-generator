@@ -94,7 +94,7 @@ def generate_page(
     title = extract_title(markdown)
     full = html_temp.replace("{{ Title }}", title).replace("{{ Content }}", content)
 
-    full = full.replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}')
+    full = full.replace('href="/', f'href="{base_path}/').replace('src="/', f'src="{base_path}/')
 
     Path(dest_path).parent.mkdir(exist_ok=True, parents=True)
     with Path(dest_path).open("w") as file:
