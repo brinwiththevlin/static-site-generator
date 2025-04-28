@@ -136,15 +136,15 @@ class TestDelimeterSplit(unittest.TestCase):
         self.assertEqual(expected, output)
 
     def test_mixed_delimiters(self):
-        node = TextNode("**bold** and *italic*", TextType.TEXT)
+        node = TextNode("**bold** and _italic_", TextType.TEXT)
         bold_split = split_nodes_delimiter([node], "**", TextType.BOLD)
         expected_bold = [
             TextNode("bold", TextType.BOLD),
-            TextNode(" and *italic*", TextType.TEXT),
+            TextNode(" and _italic_", TextType.TEXT),
         ]
         self.assertEqual(expected_bold, bold_split)
 
-        italic_split = split_nodes_delimiter(bold_split, "*", TextType.ITALIC)
+        italic_split = split_nodes_delimiter(bold_split, "_", TextType.ITALIC)
         expected_mixed = [
             TextNode("bold", TextType.BOLD),
             TextNode(" and ", TextType.TEXT),
@@ -378,7 +378,7 @@ class TestNonDelimSplit(unittest.TestCase):
 
 class TestTextToTextNodes(unittest.TestCase):
     def test(self):
-        text = "This is **text** with an *italic* word and a ```code block``` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        text = "This is **text** with an _italic_ word and a ```code block``` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         result = text_to_textnodes(text)
         expected = [
             TextNode("This is ", TextType.TEXT),
