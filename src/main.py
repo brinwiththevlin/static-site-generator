@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import shutil
+import sys
 from pathlib import Path
 
 from block import markdown_to_html_node
@@ -26,7 +27,8 @@ def dircopy(source: str | Path, dest: str | Path) -> None:
     """
     if not Path(source).is_dir() or not Path(source).exists():
         raise FileNotFoundError(f"{source} is not a directory")
-    if not Path(dest).is_dir() or not Path(dest).exists():
+    if Path(dest).exists() and not Path(dest).is_dir():
+        logger.info(f"{dest} is not a directory")
         raise FileNotFoundError(f"{dest} is not a directory")
 
     if Path(dest).exists():
@@ -66,13 +68,19 @@ def extract_title(markdown: str) -> str:
     return h1.group(1)
 
 
-def generate_page(from_path: str | Path, template_path: str | Path, dest_path: str | Path) -> None:
+def generate_page(
+    from_path: str | Path,
+    template_path: str | Path,
+    dest_path: str | Path,
+    base_path: str | Path,
+) -> None:
     """Generate an html page based on the template and teh source markdown storing at dest_path.
 
     Args:
         from_path: source path for markdown
         template_path: template path containing html skeleton
         dest_path: path to write final html page
+        base_path: base path for the site
     """
     logger.info(f"Generating page from {from_path} to {dest_path} using {template_path}")
     # open with Path.open
@@ -86,6 +94,8 @@ def generate_page(from_path: str | Path, template_path: str | Path, dest_path: s
     title = extract_title(markdown)
     full = html_temp.replace("{{ Title }}", title).replace("{{ Content }}", content)
 
+    full = full.replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}')
+
     Path(dest_path).parent.mkdir(exist_ok=True, parents=True)
     with Path(dest_path).open("w") as file:
         _ = file.write(full)
@@ -95,15 +105,17 @@ def generate_pages_recursive(
     dir_path_content: str | Path,
     template_path: str | Path,
     dest_dir_path: str | Path,
+    base_path: str | Path,
 ) -> None:
     """Generates html pages recursively from a directory containing markdown files.
 
     This function will create a directory tree in the desination directory
 
     Args:
-        dir_path_content: [TODO:description]
-        template_path: [TODO:description]
-        dest_dir_path: [TODO:description]
+        dir_path_content: path where the md content lives
+        template_path: path where the html template lives
+        dest_dir_path: path to put all html pages in
+        base_path: base path for the site
     """
     children = Path(dir_path_content).iterdir()
     for child in children:
@@ -111,13 +123,15 @@ def generate_pages_recursive(
             generate_page(
                 child,
                 template_path,
-                child.parent / child.name.replace(".md", ".html"),
+                Path(dest_dir_path) / child.name.replace(".md", ".html"),
+                base_path,
             )
         if child.is_dir():
             generate_pages_recursive(
                 child,
                 template_path,
                 Path(dest_dir_path) / child.name.replace(".md", ".html"),
+                base_path,
             )
 
 
@@ -126,18 +140,21 @@ def main() -> None:
 
     does everything
     """
+    base_path = sys.argv[1] if len(sys.argv) > 1 else "/"
+
     if Path.cwd().name == "src":
         os.chdir("..")
-    shutil.rmtree("public")
+    if Path("docs").exists():
+        shutil.rmtree("docs")
 
     source = Path.cwd() / Path("static")
-    dest = Path.cwd() / Path("public")
+    dest = Path.cwd() / Path("docs")
     dircopy(source, dest)
 
     template_path = "template.html"
     content_path = "content"
-    dest_path = "public"
-    generate_pages_recursive(content_path, template_path, dest_path)
+    dest_path = "docs"
+    generate_pages_recursive(content_path, template_path, dest_path, base_path)
 
 
 if __name__ == "__main__":

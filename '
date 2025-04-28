@@ -39,6 +39,8 @@ dist/
 .eggs/
 *.egg
 
+# Ignore public outputs (if generated during builds)
+public/*.log
 
 # Node modules (if using JS)
 node_modules/
