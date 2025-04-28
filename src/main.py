@@ -121,17 +121,11 @@ def generate_pages_recursive(
     for child in children:
         if child.name.endswith(".md"):
             generate_page(
-                child,
-                template_path,
-                Path(dest_dir_path) / child.name.replace(".md", ".html"),
-                Path(base_path) / child.parent.name,
+                child, template_path, Path(dest_dir_path) / child.name.replace(".md", ".html"), Path(base_path)
             )
         if child.is_dir():
             generate_pages_recursive(
-                child,
-                template_path,
-                Path(dest_dir_path) / child.name.replace(".md", ".html"),
-                Path(base_path) / child.parent.name,
+                child, template_path, Path(dest_dir_path) / child.name.replace(".md", ".html"), Path(base_path)
             )
 
 
@@ -154,6 +148,7 @@ def main() -> None:
     template_path = "template.html"
     content_path = "content"
     dest_path = "docs"
+    base_path = Path(base_path) / Path("docs")
     generate_pages_recursive(content_path, template_path, dest_path, base_path)
 
 
