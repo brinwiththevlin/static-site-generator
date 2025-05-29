@@ -7,7 +7,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from SSG.block import markdown_to_html_node
+from ssg.block import markdown_to_html_node
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="out.log", level=logging.INFO)

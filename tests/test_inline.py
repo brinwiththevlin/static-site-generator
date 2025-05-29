@@ -1,7 +1,7 @@
 import unittest
 
-from SSG.htmlnode import LeafNode
-from SSG.inline import (  # split_nodes_link,
+from ssg.htmlnode import LeafNode
+from ssg.inline import (  # split_nodes_link,
     extract_markdown_images,
     extract_markdown_links,
     split_nodes_delimiter,
@@ -10,7 +10,7 @@ from SSG.inline import (  # split_nodes_link,
     text_node_to_html_node,
     text_to_textnodes,
 )
-from SSG.textnode import TextNode, TextType
+from ssg.textnode import TextNode, TextType
 
 
 class TestToHTMLNode(unittest.TestCase):
