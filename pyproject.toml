@@ -54,7 +54,6 @@ dev = [
     "SSG[test]",
     "SSG[doc]",
     "SSG[build]",
-    "pygame==2.6.1"
 
 ]
 

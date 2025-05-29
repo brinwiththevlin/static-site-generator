@@ -1,5 +1,7 @@
 """HTMLNode tree representation of the content."""
 
+from typing import override
+
 
 class HTMLNode:
     """Class to represent an inline HTML node."""
@@ -19,10 +21,10 @@ class HTMLNode:
             props (dict[str, str] | None): dictionary of properties of the node
             children (list["HTMLNode"] | None): list of child nodes
         """
-        self.tag = tag
-        self.value = value
-        self.children = children
-        self.props = props
+        self.tag: str | None = tag
+        self.value: str | None = value
+        self.children: list[HTMLNode] | None = children
+        self.props: dict[str, str] | None = props
 
     def to_html(self) -> str:
         """To be implemented by child classes."""
@@ -38,10 +40,12 @@ class HTMLNode:
             return ""
         return " " + " ".join(f'{pair[0]}="{pair[1]}"' for pair in self.props.items())
 
-    def __repr__(self) -> str:  # noqa: D105
+    @override
+    def __repr__(self) -> str:
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
 
-    def __eq__(self, other: object, /) -> bool:  # noqa: D105
+    @override
+    def __eq__(self, other: object, /) -> bool:
         if not isinstance(other, HTMLNode):
             return NotImplemented
         return (

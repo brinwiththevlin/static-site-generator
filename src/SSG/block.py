@@ -3,8 +3,8 @@
 import re
 from enum import Enum
 
-from htmlnode import HTMLNode, ParentNode
-from inline import text_node_to_html_node, text_to_textnodes
+from SSG.htmlnode import HTMLNode, ParentNode
+from SSG.inline import text_node_to_html_node, text_to_textnodes
 
 
 class BlockType(Enum):

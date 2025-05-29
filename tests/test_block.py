@@ -1,6 +1,6 @@
 import unittest
 
-from block import BlockType, block_to_block_type, markdown_to_blocks, markdown_to_html_node
+from SSG.block import BlockType, block_to_block_type, markdown_to_blocks, markdown_to_html_node
 
 
 class TestBlock(unittest.TestCase):

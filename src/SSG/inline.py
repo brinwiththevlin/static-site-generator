@@ -2,8 +2,8 @@
 
 import re
 
-from htmlnode import HTMLNode, LeafNode
-from textnode import TextNode, TextType
+from SSG.htmlnode import HTMLNode, LeafNode
+from SSG.textnode import TextNode, TextType
 
 
 def text_node_to_html_node(text_node: TextNode) -> HTMLNode:
