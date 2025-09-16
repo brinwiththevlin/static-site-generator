@@ -20,7 +20,7 @@ dependencies = []
 
 # Optional classifiers for your project (Python versions, license, etc.)
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
 ]
 
@@ -50,10 +50,10 @@ dev = [
     "tox",
     "pre-commit",
     "interrogate",
-    "SSG[lint]",
-    "SSG[test]",
-    "SSG[doc]",
-    "SSG[build]",
+    "ssg[lint]",
+    "ssg[test]",
+    "ssg[doc]",
+    "ssg[build]",
 
 ]
 
@@ -91,7 +91,7 @@ extend-exclude = [
     "tests/",
     "build/",
 ]
-target-version = "py38"
+target-version = "py312"
 lint.select = ["ALL"]
 lint.ignore = [
     "COM812",   # Conflicts with the formatter
@@ -143,70 +143,3 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-# requires = ["setuptools>=61", "wheel"]
-# build-backend = "setuptools.build_meta"
-#
-# [project]
-# name = "static-site-generator"
-# version = "0.0.1"
-# description = "A simple static site generator in Python"
-# authors = [
-#     { name = "Your Name", email = "your.email@example.com" }
-# ]
-# readme = "README.md"
-# requires-python = ">=3.12"
-#
-# # Optional, license (MIT for example)
-# license = { file = "LICENSE" }
-#
-# # List your dependencies here (if you have any at this stage)
-# dependencies = []
-#
-# # Optional classifiers for your project (Python versions, license, etc.)
-# classifiers = [
-#     "Programming Language :: Python :: 3",
-#     "Operating System :: OS Independent",
-# ]
-#
-# [project.urls]
-# homepage = "https://github.com/brinwiththevlin/static-site-generator"
-# repository = "https://github.com/brinwiththevlin/static-site-generator"
-#
-#
-# [project.optional-dependencies]
-# dev = [
-#     "pre-commit",
-#     "coverage",
-#     "flake8",
-#     "black",
-#     "isort",
-#     "ruff",
-#     "pyright",
-#     "interrogate",
-# ]
-#
-# [tool.black]
-# line-length = 120
-#
-# [tool.isort]
-# profile = "black"
-# line_length = 120
-#
-# [tool.coverage.run]
-# branch = true
-#
-# [tool.coverage.report]
-# fail_under = 70
-# show_missing = true
-# skip_covered = true
-# ignore-module = true
-#
-# [tool.interrogate]
-# fail-under = 70
-#
-# [tool.setuptools]
-# package-dir = { "" = "src" }
-#
-# [tool.setuptools.packages.find]
-# where = ["src"]

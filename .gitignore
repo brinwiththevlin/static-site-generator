@@ -9,6 +9,7 @@ __pycache__/
 # Virtual environment (add if using)
 env/
 venv/
+.venv/
 
 # Coverage reports
 .coverage

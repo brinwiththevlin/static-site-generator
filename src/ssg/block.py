@@ -93,7 +93,7 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
                 children = list(map(text_node_to_html_node, text_to_textnodes(block)))
                 block_nodes.append(ParentNode(tag="p", children=children))
             case BlockType.QUOTE:
-                quote = block.replace("> ", "")
+                quote = "\n".join(map(str.strip, block.replace(">", "").split("\n")))
                 children = list(map(text_node_to_html_node, text_to_textnodes(quote)))
                 block_nodes.append(ParentNode(tag="blockquote", children=children))
             case BlockType.UL:

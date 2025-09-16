@@ -138,13 +138,16 @@ def main() -> None:
     if not base_path.endswith("/"):
         base_path = base_path + "/"
 
-    if Path.cwd().name == "src":
+    if Path.cwd().name == "ssg":
         os.chdir("..")
     if Path("docs").exists():
         shutil.rmtree("docs")
 
-    source = Path.cwd() / Path("static")
-    dest = Path.cwd() / Path("docs")
+    base_dir = Path.cwd()
+    if base_dir.name == "src":
+        base_dir = base_dir.parent
+    source = base_dir / Path("static")
+    dest = base_dir / Path("docs")
     dircopy(source, dest)
 
     template_path = "template.html"

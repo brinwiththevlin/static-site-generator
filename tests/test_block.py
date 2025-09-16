@@ -62,11 +62,11 @@ class TestMarkdownToHTMLNode(unittest.TestCase):
 
     def test_quote_conversion(self):
         # Test for a block quote
-        markdown = "> This is a quote."
+        markdown = "> This is a quote.\n>\n> more quote"
         html_node = markdown_to_html_node(markdown)
 
         self.assertEqual(html_node.children[0].tag, "blockquote")  # type: ignore
-        self.assertEqual(html_node.children[0].children[0].value, "This is a quote.")  # type: ignore
+        self.assertEqual(html_node.children[0].children[0].value, "This is a quote.\n\nmore quote")  # type: ignore
 
     def test_unordered_list_conversion(self):
         # Test for an unordered list

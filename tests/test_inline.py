@@ -205,6 +205,12 @@ class TestExtract(unittest.TestCase):
         result = extract_markdown_links(text)
         self.assertEqual(result, expected)
 
+    def test_extract_markdown_links_image(self):
+        text = "![](http://url.com/emptyalt.png)"
+        expected = []
+        result = extract_markdown_links(text)
+        self.assertEqual(result, expected)
+
 
 class TestNonDelimSplit(unittest.TestCase):
     def test_no_images(self):

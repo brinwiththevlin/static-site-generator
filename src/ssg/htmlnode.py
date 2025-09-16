@@ -1,5 +1,7 @@
 """HTMLNode tree representation of the content."""
 
+from __future__ import annotations
+
 from typing import override
 
 
@@ -11,7 +13,7 @@ class HTMLNode:
         value: str | None = None,
         tag: str | None = None,
         props: dict[str, str] | None = None,
-        children: list["HTMLNode"] | None = None,
+        children: list[HTMLNode] | None = None,
     ) -> None:
         """HTMLNode constructor.
 
@@ -98,7 +100,7 @@ class ParentNode(HTMLNode):
 
     def __init__(
         self,
-        children: list["HTMLNode"],
+        children: list[HTMLNode],
         tag: str | None = None,
         props: dict[str, str] | None = None,
     ) -> None:

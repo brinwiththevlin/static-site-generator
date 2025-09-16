@@ -118,7 +118,7 @@ def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     Returns:
     list of (anchor_text, url) tuples
     """
-    pattern = re.compile(r"\[(.*?)\]\((.*?)\)")
+    pattern = re.compile(r"(?<!!)\[(.*?)\]\((.*?)\)")
     return re.findall(pattern, text)
 
 
@@ -144,7 +144,7 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     if not matches:
         return [first, *split_nodes_image(rest)]
 
-    new_nodes = []
+    new_nodes: list[TextNode] = []
     while matches or parts:
         if parts[0] == " ":
             pair = matches.pop(0)
